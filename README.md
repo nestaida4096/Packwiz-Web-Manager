@@ -24,6 +24,9 @@
 - GitHub リポジトリとブランチの読み込み
 - Modrinth の Mod 検索、Minecraft バージョン / ローダーフィルター
 - Modrinth の .pw.toml メタデータ追加、登録済み Mod の更新確認・更新候補作成
+- `pack.toml` の `[versions]` から Minecraft / Mod Loader を読み取り、Modrinth の候補バージョンを API 結果と照合して互換性を二重確認（判定不能・非対応は追加拒否）
+- `index.toml` に登録された任意ファイルの一覧表示、テキスト/TOML/JSON編集、選択削除
+- ローカルの JAR / 任意ファイルを直接アップロード予定に追加し、SHA-256 と `index.toml` エントリーを生成（最大25 MiB/ファイル。JAR は互換性を手動確認するチェックが必須）
 - Mod メタデータの index.toml 登録、pack.toml の index ハッシュ更新
 - pack.toml / index.toml / .pw.toml の TOML 編集と構文検証
 - 変更一覧、差分確認、Git Trees API による複数ファイル一括コミット
@@ -33,6 +36,6 @@
 
 - Packwiz CLI 自体はブラウザーでは実行しません。`packwiz refresh`, `packwiz update`, エクスポート等の CLI と完全に同等ではありません。
 - Modrinth 対応のメタデータを生成します。CurseForge は API キーや配布条件などの事情があるため、このプロトタイプの対象外です。
-- GitHub の内容 API から既存の全ファイルを再帰取得する汎用ファイルブラウザーではなく、pack.toml、index.toml、index が参照する `.pw.toml` を中心に読み込みます。
+- 一覧は `index.toml` に登録された配布対象ファイルです。リポジトリ内の README や `.github` など、index に登録されていない開発用ファイルは配布対象一覧には表示しません。
 - TOML 編集は変更対象の TOML 構文を検証しますが、Packwiz 仕様全体のスキーマ検証はしません。実際に配布する前にローカルの Packwiz CLI で `packwiz refresh` / `packwiz validate` 等、利用バージョンで提供される検証コマンドを実行してください。
-- Mod 更新は Modrinth API が返す先頭の互換バージョンを選びます。ゲーム版とローダーを指定し、コミット前にファイル名・バージョン・差分を必ず確認してください。
+- Modrinth 更新では `pack.toml` の `[versions].minecraft` と loader キーを基準に、候補の `game_versions` と `loaders` を厳密照合します。両方を確認できない場合は追加・更新を拒否します。Quilt は Fabric、NeoForge は Forge の候補も Packwiz の互換性ルールに沿って許容します。
