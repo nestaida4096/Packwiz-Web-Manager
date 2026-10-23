@@ -32,7 +32,7 @@ function hasSinytraConnector(){
   const id=String(m.projectId||m.obj?.update?.modrinth?.['mod-id']||'').toLowerCase();
   const name=String(m.name||m.obj?.name||'');
   const path=String(m.path||'').split('/').pop()||'';
-  return id==='u58r1tmw' || /sinytra[ _-]*connector/i.test(name) || /sinytra[ _-]*connector/i.test(path) || (/^connector[-_.].*\.jar$/i.test(path) && /^mods\//i.test(String(m.path||''));
+  return id==='u58r1tmw' || /sinytra[ _-]*connector/i.test(name) || /sinytra[ _-]*connector/i.test(path) || (/^connector[-_.].*\.jar$/i.test(path) && /^mods\//i.test(String(m.path||'')));
  });
 }
 function getPackConstraints(){
