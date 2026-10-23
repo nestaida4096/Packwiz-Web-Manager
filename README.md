@@ -39,3 +39,9 @@
 - 一覧は `index.toml` に登録された配布対象ファイルです。リポジトリ内の README や `.github` など、index に登録されていない開発用ファイルは配布対象一覧には表示しません。
 - TOML 編集は変更対象の TOML 構文を検証しますが、Packwiz 仕様全体のスキーマ検証はしません。実際に配布する前にローカルの Packwiz CLI で `packwiz refresh` / `packwiz validate` 等、利用バージョンで提供される検証コマンドを実行してください。
 - Modrinth 更新では `pack.toml` の `[versions].minecraft` と loader キーを基準に、候補の `game_versions` と `loaders` を厳密照合します。両方を確認できない場合は追加・更新を拒否します。Quilt は Fabric、NeoForge は Forge の候補も Packwiz の互換性ルールに沿って許容します。
+
+## Sinytra Connector と Forge 環境での Fabric Mod
+
+`index.toml` の登録ファイル一覧に Sinytra Connector（Modrinth project ID `u58R1TMW`、名前に `Sinytra Connector` を含むメタデータ、または `mods/connector-*.jar`）を検出した場合、`pack.toml` のローダーが `forge` のときに限り、Modrinth の検索・配布バージョン互換性チェックで `fabric` も許可します。Minecraft バージョンは引き続き `pack.toml` の値と完全一致する必要があります。Connector がない Forge 環境では Fabric Mod は許可されません。
+
+この判定は Connector が `index.toml` のファイル一覧に含まれていることを前提とします。JAR の中身を解析して Connector かどうかを判定するものではなく、ファイル名だけの場合は `mods/connector-*.jar` を検出条件とします。
