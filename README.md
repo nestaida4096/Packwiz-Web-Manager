@@ -45,3 +45,8 @@
 `index.toml` の登録ファイル一覧に Sinytra Connector（Modrinth project ID `u58R1TMW`、名前に `Sinytra Connector` を含むメタデータ、または `mods/connector-*.jar`）を検出した場合、`pack.toml` のローダーが `forge` のときに限り、Modrinth の検索・配布バージョン互換性チェックで `fabric` も許可します。Minecraft バージョンは引き続き `pack.toml` の値と完全一致する必要があります。Connector がない Forge 環境では Fabric Mod は許可されません。
 
 この判定は Connector が `index.toml` のファイル一覧に含まれていることを前提とします。JAR の中身を解析して Connector かどうかを判定するものではなく、ファイル名だけの場合は `mods/connector-*.jar` を検出条件とします。
+
+
+## Modrinth の導入バージョン選択
+
+検索結果の「互換性確認して追加」を押すと、導入可能なバージョンを選ぶダイアログを表示します。Minecraft バージョンと Mod Loader の互換性を満たし、配布ファイルとハッシュを確認できたバージョンだけが候補になります。バージョン番号、公開種別、公開日時、対象 Minecraft バージョン、ローダー、配布ファイル名を確認し、「このバージョンを追加」で変更予定に登録できます。キャンセルした場合は変更しません。
