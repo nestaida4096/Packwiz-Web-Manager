@@ -8,3 +8,5 @@
 
 
 .version-dialog{width:min(620px,calc(100vw - 28px));max-height:calc(100vh - 32px);overflow:auto;color:#e6edf3;background:#161b22;border:1px solid #484f58;border-radius:13px;padding:22px;box-shadow:0 18px 70px #0009}.version-dialog::backdrop{background:#000a;backdrop-filter:blur(2px)}.version-dialog h2{margin:0 0 8px;font-size:1.2rem}.version-dialog form{display:grid;gap:13px}.version-dialog .actions{justify-content:flex-end;margin-top:0}.version-details{border:1px solid #30363d;border-radius:9px;background:#0d1117;padding:13px;line-height:1.6;overflow-wrap:anywhere}.version-details p{margin:4px 0}.version-details strong{color:#e6edf3}.version-dialog select{margin-top:2px}
+
+.option-settings{border:1px solid #30363d;border-radius:9px;padding:13px;display:grid;gap:10px;min-width:0}.option-settings legend{padding:0 6px;font-weight:600}.option-settings .confirm-label{margin:0}.option-settings textarea{min-height:74px;margin:0;resize:vertical}.option-settings input[type="checkbox"]{width:auto;flex:0 0 auto;margin:3px 0 0}.option-settings input[type="checkbox"]:disabled{opacity:.45}.option-settings .hint{margin:0}

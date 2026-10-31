@@ -23,6 +23,13 @@
       <p id="versionDialogProject" class="hint"></p>
       <label>導入するバージョン<select id="versionChoice" required></select></label>
       <div id="versionDetails" class="version-details" aria-live="polite"></div>
+      <fieldset class="option-settings">
+        <legend>Packwiz option 設定</legend>
+        <label class="confirm-label"><input id="modOptional" type="checkbox"> この Mod を任意導入にする（optional = true）</label>
+        <label class="confirm-label"><input id="modDefault" type="checkbox" checked disabled> 任意導入の場合、初期状態で有効にする（default = true）</label>
+        <label>説明文（description）<textarea id="modOptionDescription" rows="3" placeholder="この Mod を有効にする理由や機能を説明"></textarea></label>
+        <p class="hint">任意導入を有効にした場合のみ default を設定できます。説明文だけを設定する場合は、Mod は必須のままになります。</p>
+      </fieldset>
       <p class="hint">pack.toml の Minecraft バージョンと Mod Loader に対応するバージョンだけを表示します。追加を確定するまでは変更予定に入りません。</p>
       <div class="actions"><button type="button" id="cancelVersion" class="secondary">キャンセル</button><button type="button" id="confirmVersion" class="primary">このバージョンを追加</button></div>
     </form>
