@@ -50,3 +50,12 @@
 ## Modrinth の導入バージョン選択
 
 検索結果の「互換性確認して追加」を押すと、導入可能なバージョンを選ぶダイアログを表示します。Minecraft バージョンと Mod Loader の互換性を満たし、配布ファイルとハッシュを確認できたバージョンだけが候補になります。バージョン番号、公開種別、公開日時、対象 Minecraft バージョン、ローダー、配布ファイル名を確認し、「このバージョンを追加」で変更予定に登録できます。キャンセルした場合は変更しません。
+
+## UI / version management improvements
+
+- The GitHub connection workflow keeps a modal open while repository metadata, `pack.toml`, `index.toml`, and indexed text/metadata files are read. It reports phase-based progress and a percentage. The percentage is an estimate based on completed stages/files, not a byte-level network transfer measurement.
+- Minecraft release versions are loaded from the Modrinth game-version catalog. Fabric and Quilt loader versions are loaded from their official metadata APIs; Forge versions use the official Forge promotions catalog; NeoForge versions use its Maven metadata.
+- Select the Minecraft version, loader family, and loader version, then choose **pack.toml に適用**. This stages the `[versions]` changes in `pack.toml`; it does not commit them automatically. The existing unrelated `pack.toml` fields are preserved.
+- Repository file lists include a path/name filter and incremental display (80 items at a time), with a bounded internal scroll area.
+- Smartphone layout changes are restricted to narrow touch devices. Desktop/tablet styling is unchanged by those smartphone-specific rules.
+- `app.js` was checked with `node --check`; all statically referenced element IDs were checked against `index.html`.
