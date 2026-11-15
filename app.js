@@ -47,7 +47,6 @@ function parseToml(s,path){try{return TOML.parse(s);}catch(e){throw Error(`${pat
 function setChange(path,text,options={}){const previous=state.changes.get(path);state.changes.set(path,{text,sha:state.files.get(path)?.sha||null,original:state.original.get(path)??null,indexable:options.indexable??previous?.indexable??path.endsWith('.pw.toml')});renderChanges();}
 function renderChanges(){const el=$('changeList');if(!state.changes.size){el.innerHTML='<p class="hint">変更はありません。</p>';return;}el.innerHTML='';for(const [path,c] of state.changes){const row=document.createElement('div');row.className='change-row';row.innerHTML=`<div><strong>${esc(path)}</strong><p class="hint">${c.original===null?'新規ファイル':'変更済みファイル'}</p></div><button data-revert="${esc(path)}">取り消す</button>`;el.append(row);}el.querySelectorAll('[data-revert]').forEach(b=>b.onclick=()=>{state.changes.delete(b.dataset.revert);renderChanges();});}
 function wildcardRegex(pattern){
- const escaped=pattern.toLowerCase().replace(/[.+^$(){}|[\]\\]/g,'\\function wildcardRegex(pattern){
  let source='';
  for(const char of pattern.toLowerCase()){
   if(char==='*')source+='.*';
@@ -73,8 +72,8 @@ function renderMods(){
  if(!filtered.length){el.innerHTML='<p class="hint">'+(state.mods.length?'検索条件に一致するファイルはありません。':'index.toml に登録されたファイルはありません。')+'</p>';$('showMoreFiles').hidden=true;return;}
  for(const m of filtered.slice(0,state.fileLimit)){
   const row=document.createElement('div');row.className='mod-row';
-  const kind=m.isMeta?'Packwiz メタデータ':(/\.jar$/i.test(m.path)?'JAR ファイル':'インデックス登録ファイル');
-  const canEdit=/\.(pw\.toml|toml|json|cfg|conf|txt|properties|yml|yaml|mcmeta)$/i.test(m.path)&&!m.isBinary;
+  const kind=m.isMeta?'Packwiz メタデータ':(/\\.jar$/i.test(m.path)?'JAR ファイル':'インデックス登録ファイル');
+  const canEdit=/\\.(pw\\.toml|toml|json|cfg|conf|txt|properties|yml|yaml|mcmeta)$/i.test(m.path)&&!m.isBinary;
   row.innerHTML='<label><input type="checkbox" value="'+esc(m.path)+'"><span><strong>'+esc(m.name)+'</strong><small>'+esc(m.path)+' · '+esc(kind)+(m.projectId?' · Modrinth ID: '+esc(m.projectId):'')+'</small></span></label>'+(canEdit?'<button class="secondary" data-edit="'+esc(m.path)+'">ファイル編集</button>':'');
   el.append(row);
  }
