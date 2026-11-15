@@ -47,17 +47,40 @@ function parseToml(s,path){try{return TOML.parse(s);}catch(e){throw Error(`${pat
 function setChange(path,text,options={}){const previous=state.changes.get(path);state.changes.set(path,{text,sha:state.files.get(path)?.sha||null,original:state.original.get(path)??null,indexable:options.indexable??previous?.indexable??path.endsWith('.pw.toml')});renderChanges();}
 function renderChanges(){const el=$('changeList');if(!state.changes.size){el.innerHTML='<p class="hint">変更はありません。</p>';return;}el.innerHTML='';for(const [path,c] of state.changes){const row=document.createElement('div');row.className='change-row';row.innerHTML=`<div><strong>${esc(path)}</strong><p class="hint">${c.original===null?'新規ファイル':'変更済みファイル'}</p></div><button data-revert="${esc(path)}">取り消す</button>`;el.append(row);}el.querySelectorAll('[data-revert]').forEach(b=>b.onclick=()=>{state.changes.delete(b.dataset.revert);renderChanges();});}
 function wildcardRegex(pattern){
- const escaped=pattern.toLowerCase().replace(/[.+^$(){}|[\]\\]/g,'\\function renderMods(){
+ const escaped=pattern.toLowerCase().replace(/[.+^$(){}|[\]\\]/g,'\\function wildcardRegex(pattern){
+ let source='';
+ for(const char of pattern.toLowerCase()){
+  if(char==='*')source+='.*';
+  else if(char==='?')source+='.';
+  else source+=("\\\\^$.*+?()[]{}|".includes(char)?"\\\\":"")+char;
+ }
+ return new RegExp('^'+source+'$','i');
+}
+function renderMods(){
  const el=$('modList');el.innerHTML='';
- const query=($('fileFilter')?.value||'').trim().toLowerCase();
- const filtered=state.mods.filter(m=>!query||`${m.name} ${m.path}`.toLowerCase().includes(query));').replace(/\*/g,'.*').replace(/\?/g,'.');
- return new RegExp('^'+escaped+'
- $('fileCount').textContent=`${filtered.length} 件中 ${Math.min(filtered.length,state.fileLimit)} 件を表示`;
- if(!filtered.length){el.innerHTML=`<p class="hint">${state.mods.length?'検索条件に一致するファイルはありません。':'index.toml に登録されたファイルはありません。'}</p>`;$('showMoreFiles').hidden=true;return;}
- for(const m of filtered.slice(0,state.fileLimit)){const row=document.createElement('div');row.className='mod-row';const kind=m.isMeta?'Packwiz メタデータ':(/\.jar$/i.test(m.path)?'JAR ファイル':'インデックス登録ファイル');const canEdit=/\.(pw\.toml|toml|json|cfg|conf|txt|properties|yml|yaml|mcmeta)$/i.test(m.path)&&!m.isBinary;
- row.innerHTML=`<label><input type="checkbox" value="${esc(m.path)}"><span><strong>${esc(m.name)}</strong><small>${esc(m.path)} · ${esc(kind)}${m.projectId?' · Modrinth ID: '+esc(m.projectId):''}</small></span></label>${canEdit?`<button class="secondary" data-edit="${esc(m.path)}">ファイル編集</button>`:''}`;el.append(row);}
- $('showMoreFiles').hidden=filtered.length<=state.fileLimit;$('showMoreFiles').textContent=`さらに ${Math.min(80,filtered.length-state.fileLimit)} 件表示`;
- el.querySelectorAll('[data-edit]').forEach(b=>b.onclick=async()=>{try{const path=b.dataset.edit;if(!$('tomlFile').querySelector(`option[value="${CSS.escape(path)}"]`)){$('tomlFile').add(new Option(path,path));}$('tomlFile').value=path;await loadTomlFile(path);}catch(e){status('repoStatus',e.message,'error');}});
+ const pattern=($('fileFilter')?.value||'').trim();
+ const matcher=pattern?wildcardRegex(pattern):null;
+ const side=$('sideFilter')?.value||'all';
+ const optional=$('optionalFilter')?.value||'all';
+ const filtered=state.mods.filter(m=>{
+  const meta=m.obj||{};
+  const modSide=['client','server','both'].includes(String(meta.side||'').toLowerCase())?String(meta.side).toLowerCase():'unknown';
+  const isOptional=meta.option?.optional===true;
+  const matchesName=!pattern||(matcher&&(matcher.test(m.path.toLowerCase())||matcher.test(m.name.toLowerCase())));
+  return (side==='all'||modSide===side)&&(optional==='all'||(optional==='optional'?isOptional:!isOptional))&&matchesName;
+ });
+ $('fileCount').textContent=filtered.length+' 件中 '+Math.min(filtered.length,state.fileLimit)+' 件を表示';
+ if(!filtered.length){el.innerHTML='<p class="hint">'+(state.mods.length?'検索条件に一致するファイルはありません。':'index.toml に登録されたファイルはありません。')+'</p>';$('showMoreFiles').hidden=true;return;}
+ for(const m of filtered.slice(0,state.fileLimit)){
+  const row=document.createElement('div');row.className='mod-row';
+  const kind=m.isMeta?'Packwiz メタデータ':(/\.jar$/i.test(m.path)?'JAR ファイル':'インデックス登録ファイル');
+  const canEdit=/\.(pw\.toml|toml|json|cfg|conf|txt|properties|yml|yaml|mcmeta)$/i.test(m.path)&&!m.isBinary;
+  row.innerHTML='<label><input type="checkbox" value="'+esc(m.path)+'"><span><strong>'+esc(m.name)+'</strong><small>'+esc(m.path)+' · '+esc(kind)+(m.projectId?' · Modrinth ID: '+esc(m.projectId):'')+'</small></span></label>'+(canEdit?'<button class="secondary" data-edit="'+esc(m.path)+'">ファイル編集</button>':'');
+  el.append(row);
+ }
+ $('showMoreFiles').hidden=filtered.length<=state.fileLimit;
+ $('showMoreFiles').textContent='さらに '+Math.min(80,filtered.length-state.fileLimit)+' 件表示';
+ el.querySelectorAll('[data-edit]').forEach(b=>b.onclick=async()=>{try{const path=b.dataset.edit;if(!$('tomlFile').querySelector('option[value="'+CSS.escape(path)+'"]'))$('tomlFile').add(new Option(path,path));$('tomlFile').value=path;await loadTomlFile(path);}catch(e){status('repoStatus',e.message,'error');}});
 }
 function hasSinytraConnector(){
  // Prefer the known Modrinth project ID and explicit display/path names to avoid
