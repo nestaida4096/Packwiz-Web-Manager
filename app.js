@@ -48,10 +48,12 @@ function setChange(path,text,options={}){const previous=state.changes.get(path);
 function renderChanges(){const el=$('changeList');if(!state.changes.size){el.innerHTML='<p class="hint">変更はありません。</p>';return;}el.innerHTML='';for(const [path,c] of state.changes){const row=document.createElement('div');row.className='change-row';row.innerHTML=`<div><strong>${esc(path)}</strong><p class="hint">${c.original===null?'新規ファイル':'変更済みファイル'}</p></div><button data-revert="${esc(path)}">取り消す</button>`;el.append(row);}el.querySelectorAll('[data-revert]').forEach(b=>b.onclick=()=>{state.changes.delete(b.dataset.revert);renderChanges();});}
 function wildcardRegex(pattern){
  let source='';
+ const slash=String.fromCharCode(92);
+ const special=slash+'^$.*+?()[]{}|';
  for(const char of pattern.toLowerCase()){
   if(char==='*')source+='.*';
   else if(char==='?')source+='.';
-  else source+=("\\\\^$.*+?()[]{}|".includes(char)?"\\\\":"")+char;
+  else source+=(special.includes(char)?slash:'')+char;
  }
  return new RegExp('^'+source+'$','i');
 }
@@ -158,7 +160,13 @@ async function loadRepo(){
  }catch(e){status('repoStatus','接続成功しましたが pack.toml の互換性設定を確認してください: '+e.message,'error');}
  updateBusy(100,'リポジトリの読み込みが完了しました。','完了');
 }
-async function loadTomlFile(path){if(!state.files.has(path)){const c=await getContent(path);state.files.set(path,c);state.original.set(path,c.text);} $('tomlEditor').value=state.changes.get(path)?.text??state.files.get(path).text;}
+async function loadTomlFile(path){
+ if(!state.files.has(path)||typeof state.files.get(path)?.text!=='string'){
+  const c=await getContent(path);state.files.set(path,c);state.original.set(path,c.text);
+ }
+ $('tomlEditor').value=state.changes.get(path)?.text??state.files.get(path).text;
+}
+
 function indexObject(){const raw=state.changes.get('index.toml')?.text??state.files.get('index.toml')?.text;if(!raw)throw Error('index.toml がありません。');return parseToml(raw,'index.toml');}
 function serializeIndex(idx){return TOML.stringify(idx).trimEnd()+'\n';}
 async function stagePackIndex(){
