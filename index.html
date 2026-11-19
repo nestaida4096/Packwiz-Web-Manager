@@ -24,36 +24,14 @@
   >
 </label><div class="version-actions"><button id="refreshVersionCatalog" type="button" class="secondary">バージョン一覧を更新</button><button id="applyPackVersions" type="button" class="primary">pack.toml に適用</button></div></div><p class="hint" id="versionConfigStatus">接続後、pack.toml のバージョンを読み込みます。変更は「pack.toml に適用」で変更予定に追加されます。</p><div class="actions"><button id="searchMods">Mod を検索</button><button id="updateAll" class="secondary">選択した Mod の更新確認</button></div><div id="searchStatus" class="status" aria-live="polite"></div><div id="results" class="results"></div><section class="update-review" aria-labelledby="updateReviewTitle"><h3 id="updateReviewTitle">更新候補の確認</h3><p class="hint">更新候補を確認し、Mod ごとに変更予定への追加または却下を選択してください。この一覧に表示されているだけではコミット予定に追加されません。</p><div id="updateCandidates" class="results"><p class="hint">まだ更新候補はありません。</p></div></section>
   <section class="curseforge-panel" aria-labelledby="curseforgeTitle">
-    <h3 id="curseforgeTitle">CurseForge から追加</h3>
-    <p class="hint">検索・ID指定には各自の CurseForge API キーが必要です。直接URL追加はAPIキーなしで利用できます。</p>
-    <div class="cf-key-box">
-      <label>CurseForge API キー <input id="cfApiKey" type="password" autocomplete="off" placeholder="API キーを入力"></label>
-      <div class="actions"><button id="cfSaveKey" type="button" class="secondary">Cookieに保存</button><button id="cfForgetKey" type="button" class="secondary">保存キーを削除</button></div>
-      <p id="cfKeyStatus" class="status" aria-live="polite"></p>
-      <p class="hint"><a href="https://console.curseforge.com/" target="_blank" rel="noopener noreferrer">CurseForge APIキーの管理画面</a>。キーはこのブラウザーのCookieに保存されます。JavaScriptから読み取れるため、ページ上のスクリプトや開発者ツールから秘匿できる方式ではありません。信頼できるHTTPS配信元でのみ使用してください。</p>
-    </div>
-    <div class="cf-subsection">
-      <h4>検索して追加</h4>
-      <label>検索語 <input id="cfQuery" placeholder="例: Sodium"></label>
-      <div class="actions"><button id="cfSearch" type="button">CurseForgeを検索</button></div>
-      <div id="cfSearchStatus" class="status" aria-live="polite"></div>
-      <div id="cfResults" class="results"></div>
-    </div>
-    <div class="cf-subsection">
-      <h4>IDを指定して追加（検索不要）</h4>
-      <p class="hint">Mod IDとFile IDを直接指定します。対象ファイルが pack.toml のMinecraft・ローダー条件に合うかAPIで確認します。</p>
-      <div class="grid two"><label>Mod ID <input id="cfModId" inputmode="numeric" placeholder="例: 238222"></label><label>File ID <input id="cfFileId" inputmode="numeric" placeholder="例: 1234567"></label></div>
-      <div class="actions"><button id="cfAddById" type="button" class="secondary">ID指定で追加</button></div>
-      <p id="cfIdStatus" class="status" aria-live="polite"></p>
-    </div>
-    <div class="cf-subsection">
-      <h4>直接URLから追加（APIキー不要）</h4>
-      <p class="hint">URL・ファイル名・ハッシュを指定します。Packwizのメタデータにはハッシュが必須です。CurseForgeのMod IDは設定されないため自動更新対象にはなりません。</p>
-      <div class="grid two"><label>ダウンロードURL <input id="cfDirectUrl" type="url" placeholder="https://example.com/mod.jar"></label><label>保存ファイル名 <input id="cfDirectFilename" placeholder="example-mod.jar"></label></div>
-      <div class="grid two"><label>ハッシュ形式 <select id="cfDirectHashFormat"><option value="sha256">SHA-256</option><option value="sha1">SHA-1</option><option value="md5">MD5</option></select></label><label>ハッシュ値 <input id="cfDirectHash" placeholder="16進数のハッシュ値"></label></div>
-      <div class="actions"><button id="cfAddDirect" type="button" class="secondary">URLから追加予定にする</button></div>
-      <p id="cfDirectStatus" class="status" aria-live="polite"></p>
-    </div>
+    <h3 id="curseforgeTitle">CurseForge IDを指定して追加（API不使用）</h3>
+    <p class="hint">CurseForge APIには接続しません。Mod ID・File IDに加え、配布URL・ファイル名・ハッシュを手動入力して .pw.toml を生成します。Minecraftバージョン・ローダーの互換性検査も行いません。</p>
+    <div class="grid two"><label>Mod ID <input id="cfModId" inputmode="numeric" placeholder="例: 238222" required></label><label>File ID <input id="cfFileId" inputmode="numeric" placeholder="例: 1234567" required></label></div>
+    <label>Mod名 <input id="cfModName" placeholder="例: Example Mod"></label>
+    <div class="grid two"><label>ダウンロードURL <input id="cfManualUrl" type="url" placeholder="https://..." required></label><label>ファイル名 <input id="cfManualFilename" placeholder="example-mod.jar" required></label></div>
+    <div class="grid two"><label>ハッシュ形式 <select id="cfManualHashFormat"><option value="sha256">SHA-256</option><option value="sha512">SHA-512</option><option value="sha1">SHA-1</option><option value="md5">MD5</option><option value="murmur2">Murmur2</option></select></label><label>ハッシュ値 <input id="cfManualHash" placeholder="ファイルのハッシュ値" required></label></div>
+    <div class="actions"><button id="cfAddById" type="button" class="secondary">ID情報を登録して追加予定にする</button></div>
+    <p id="cfIdStatus" class="status" aria-live="polite"></p>
   </section>
 </section>
   <section class="panel"><h2>3. リポジトリ内のファイル</h2><p class="hint">index.toml に登録された .pw.toml 以外のファイルも一覧表示します。選択したファイルは index.toml から解除し、リポジトリからも削除対象にできます。</p><div class="actions"><button id="refreshMods" class="secondary">一覧を再読み込み</button><button id="removeSelected" class="danger">選択したファイルを削除</button></div><div class="file-filters">
