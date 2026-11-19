@@ -33,3 +33,10 @@
 .commit-link:hover{background:#21262d}
 @media(max-width:760px){.file-filters{grid-template-columns:1fr 1fr}.file-filters .filename-filter{grid-column:1/-1}.file-filters .hint{margin:0}.result-rich{flex-direction:column}.result-rich .actions{width:100%;justify-content:flex-end}}
 @media(max-width:600px) and (hover:none) and (pointer:coarse){.file-filters{grid-template-columns:1fr}.file-filters .filename-filter{grid-column:auto}.result-rich .result-main{width:100%}.result-icon{width:48px;height:48px;flex-basis:48px}}
+
+.curseforge-panel{margin-top:20px;padding:16px;border:1px solid #30363d;border-radius:10px;background:#0d1117}
+.curseforge-panel h3{font-size:1rem;margin:0 0 8px}.curseforge-panel h4{font-size:.94rem;margin:0 0 10px}
+.cf-key-box{padding:13px;border:1px solid #6e5b2b;border-radius:9px;background:#211d12}
+.cf-subsection{margin-top:16px;padding-top:15px;border-top:1px solid #30363d}
+.cf-key-box .hint{margin:8px 0 0}.cf-key-box .actions{margin-top:9px}
+@media(max-width:600px) and (hover:none) and (pointer:coarse){.curseforge-panel{padding:12px}.cf-key-box{padding:11px}}
